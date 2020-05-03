@@ -1,5 +1,76 @@
 @tailwind base;
 @tailwind components;
+
+.menu-entry {
+    @apply block w-64 p-4 text-left rounded-md;
+}
+
+.menu-entry:hover {
+    @apply bg-gray-800;
+}
+
+.full-notif {
+    @apply text-center my-auto absolute py-20;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+}
+
+.full-notif h1 {
+    @apply text-4xl font-bold m-4;
+}
+
+.full-notif p {
+    @apply text-lg font-light;
+}
+
+.full-notif a, .full-notif a:visited {
+    @apply text-green-400;
+}
+
+
+@screen lg {
+
+    .full-notif {
+        @apply mt-24 mx-32 rounded-md bg-smokegray bg-opacity-25;
+        top: 5vh;
+        bottom: auto;
+        left: 10vw;
+        right: 10vw;
+        min-height: 45vh !important;
+    }
+
+    .full-notif h1 {
+        @apply text-6xl;
+    }
+
+    .full-notif p {
+        @apply text-xl;
+    }
+}
+
+@screen xl {
+    .full-notif {
+        left: 8vw;
+        right: 8vw;
+    }
+}
+
+.bg-smokegray {
+    --bg-opacity: 1;
+    background-color: rgba(32, 32, 32, var(--bg-opacity));
+}
+
+.text-smokegray-light {
+    color: #707065;
+}
+
+.border-transition-0_25 {
+    transition: border 0.25s;
+}
+
 @tailwind utilities;
 
 body {

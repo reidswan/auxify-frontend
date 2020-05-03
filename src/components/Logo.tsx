@@ -11,7 +11,7 @@ function LogoImage(props: {size?: LogoSize}) {
   let size = props.size || LogoSize.MEDIUM;
   return (
     <div className={`inline-block rounded-full bg-white p-0 m-0 w-${size} h-${size}`}>
-      <img style={{"filter": "invert(1)"}} src={logo} className="ml-auto mr-auto mt-0 mb-0 h-full"/>
+      <img style={{"filter": "invert(1)"}} src={logo} className="ml-auto mr-auto mt-0 mb-0 h-full" alt="Auxify logo"/>
     </div>
   )
 }
@@ -39,7 +39,7 @@ export function Logo(props: LogoProps) {
   return (
     <div className={`m-4 flex ${hasOnClick ? "cursor-pointer" : ""}`} onClick={onClick}>
       <div className="self-center h-full"><LogoImage size={size}/></div>
-      {size > LogoSize.SMALL && <h1 className={`inline-block self-center ${textSize} pl-2 pb-2`}>Auxify</h1>}
+      {size > LogoSize.SMALL && <h1 className={`inline-block self-center ${textSize} pl-3 pb-1`}>Auxify</h1>}
     </div>
   )
 }
