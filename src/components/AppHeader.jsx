@@ -17,7 +17,7 @@ const Icon = (props) => {
     borderRadius: "100%",
     ...props,
   };
-
+  
   return (
     <img
       src={iconImage}

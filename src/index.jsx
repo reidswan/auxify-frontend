@@ -34,54 +34,7 @@ const App = ({ store }) => {
           {(size) => (
             <Box fill>
               <AppHeader />
-              <Box flex direction="row" overflow={{ horizontal: "hidden" }}>
-                {!showSidebar || size !== "small" ? (
-                  <Collapsible direction="horizontal" open={showSidebar}>
-                    <Box
-                      flex
-                      width="small"
-                      background="light-2"
-                      elevation="small"
-                      align="center"
-                      justify="start"
-                      pad="small"
-                      gap="large"
-                    >
-                      <div>thing 1</div>
-                      <div>thing 1</div>
-                      <div>thing 1</div>
-                    </Box>
-                  </Collapsible>
-                ) : (
-                  <Layer>
-                    <Box
-                      background="light-2"
-                      tag="header"
-                      justify="end"
-                      align="center"
-                      direction="row"
-                    >
-                      <Button
-                        icon={<FormClose />}
-                        onClick={() => setShowSidebar(false)}
-                      />
-                    </Box>
-                    <Box
-                      fill
-                      background="light-2"
-                      align="center"
-                      justify="center"
-                      pad="small"
-                      gap="large"
-                    >
-                      <div>thing 1</div>
-                      <div>thing 1</div>
-                      <div>thing 1</div>
-                    </Box>
-                  </Layer>
-                )}
-                <Body history={history}/>
-              </Box>
+              <Body history={history}/>
             </Box>
           )}
         </ResponsiveContext.Consumer>
