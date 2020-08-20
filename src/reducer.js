@@ -4,7 +4,7 @@ import history from './history'
 
 const initialState = {
   "count": 0,
-  "jwt": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhdXRoIiwiZXhwIjoxNTk3NzY1MTMzLjc0MzMyNywibmJmIjoxNTk3Njc4NzMzLjc0MzMyNywic3ViIjoiMSJ9.3zZk8tVk5HO-f0tAMHTG7-f7XKL8bsy_TZSbv4oCnBE",
+  "jwt": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhdXRoIiwiZXhwIjoxNTk4MDI3NjA4LjAzMDQ3NSwibmJmIjoxNTk3OTQxMjA4LjAzMDQ3NSwic3ViIjoiMSJ9.GXLmObKnzEyjIhE8X4MVEWLCmIW3BucZo96g6QUEKb4",
   "user": null, 
   "rooms": null,
   "loadingUser": false,
@@ -49,8 +49,6 @@ export function reducer(state = initialState, action) {
         loadingRooms: false
       }
     case actions.REDIRECT:
-      console.log("REDIRECTING!");
-      console.log(action.location);
       history.push(action.location);
       return state;
     default:

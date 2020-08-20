@@ -7,6 +7,7 @@ export default (props) => (
     direction="row"
     align="center"
     justify="between"
+    background="focusBackground"
     pad={{ left: "medium", right: "medium", vertical: "small" }}
     style={{ zIndex: "1" }}
     {...props}

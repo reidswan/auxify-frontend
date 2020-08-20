@@ -3,7 +3,6 @@ import axios from 'axios';
 export const REDIRECT = "REDIRECT";
 
 export function redirect(to) {
-  console.log("REDIRECT:", to);
   return {
     "type": REDIRECT,
     "location": to

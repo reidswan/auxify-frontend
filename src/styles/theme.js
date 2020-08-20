@@ -3,7 +3,8 @@ export default {
     colors: {
       brand: "#1db954",
       highlight: "#1db954",
-      background: "#0f0f0f"
+      background: "black",
+      focusBackground: "#0f0f0f"
     },
     font: {
       family: "Montserrat",
