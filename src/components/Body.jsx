@@ -6,7 +6,7 @@ import Room from "./Room";
 import CreateRoom from "./CreateRoom";
 
 export default (props) => (
-  <Box flex align="center" justify="start" pad={{top: "10vh"}}>
+  <Box flex align="center" justify="start">
     <Router history={props.history}>
       <Route exact path="/" component={RoomList} />
       <Route exact path="/room/:roomId" component={Room} />

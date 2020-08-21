@@ -11,8 +11,8 @@ import {
 
 import theme from './styles/theme'
 import "./styles/index.css";
-import * as actions from "./actions";
-import { reducer } from "./reducer";
+import * as actions from "./actions/actions";
+import { reducer } from "./actions/reducer";
 import AppHeader from './components/AppHeader';
 import Body from './components/Body';
 import history from './history';

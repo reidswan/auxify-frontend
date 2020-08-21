@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from 'react-redux';
-import { fetchRooms } from '../actions';
+import { fetchRooms } from '../actions/actions';
 
 class Room extends React.Component {
 

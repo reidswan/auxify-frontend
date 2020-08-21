@@ -1,14 +1,15 @@
 import * as actions from './actions';
-import history from './history'
+import history from '../history'
 
 
 const initialState = {
   "count": 0,
-  "jwt": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhdXRoIiwiZXhwIjoxNTk4MDI3NjA4LjAzMDQ3NSwibmJmIjoxNTk3OTQxMjA4LjAzMDQ3NSwic3ViIjoiMSJ9.GXLmObKnzEyjIhE8X4MVEWLCmIW3BucZo96g6QUEKb4",
+  "jwt": "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhdXRoIiwiZXhwIjoxNTk4MTA5MzI1LjQ5MTAyOSwibmJmIjoxNTk4MDIyOTI1LjQ5MTAyOSwic3ViIjoiMSJ9.hA884koiqx9Tcu7eiMSnwEv0xNIG384rgxYtIZh2qU0",
   "user": null, 
   "rooms": null,
   "loadingUser": false,
-  "loadingRooms": false
+  "loadingRooms": false,
+  "processingCreateRoom": false
 }
 
 

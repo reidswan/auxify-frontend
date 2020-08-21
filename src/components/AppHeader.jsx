@@ -4,7 +4,7 @@ import { User } from "grommet-icons";
 import iconImage from "../img/minimal-white.svg";
 import AppBar from "./AppBar";
 import { connect } from "react-redux";
-import { redirect } from "../actions";
+import { redirect } from "../actions/actions";
 
 const Icon = (props) => {
   const styleWithDefaults = {

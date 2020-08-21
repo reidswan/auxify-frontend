@@ -41,6 +41,7 @@ function asyncActionsCreator(prefix) {
 
 export const FETCH_USER = asyncActionsCreator("FETCH_USER");
 export const FETCH_ROOMS = asyncActionsCreator("FETCH_ROOMS");
+export const AUTH_WITH_SPOTIFY = asyncActionsCreator("AUTH_WITH_SPOTIFY");
 
 function requiresUserLogin(f, requireUser = false, requireToken = true) {
   return (...args) => {
@@ -89,3 +90,20 @@ function _fetchRooms() {
 }
 
 export const fetchRooms = requiresUserLogin(_fetchRooms);
+
+function _getSpotifyAuthURL() {
+  return (dispatch, getState) => {
+    dispatch(AUTH_WITH_SPOTIFY.begin());
+
+    let token = getState().jwt;
+    return axios.get("http://localhost:8080/spotify_auth", {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
+    .then(result => dispatch(AUTH_WITH_SPOTIFY.success(result.data)))
+    .catch(err => dispatch(AUTH_WITH_SPOTIFY.failure(err)));
+  }
+}
+
+export const getSpotifyAuthURL = requiresUserLogin(_getSpotifyAuthURL);
