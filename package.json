@@ -11,6 +11,7 @@
     "grommet": "^2.14.0",
     "grommet-icons": "^4.4.0",
     "history": "^4.10.1",
+    "jwt-decode": "^2.2.0",
     "polished": "^3.6.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -19,7 +20,8 @@
     "react-scripts": "3.4.3",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "styled-components": "^5.1.1"
+    "styled-components": "^5.1.1",
+    "universal-cookie": "^4.0.3"
   },
   "scripts": {
     "start": "react-scripts start",

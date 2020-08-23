@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Box, Heading, Button } from "grommet";
 import { FormNext, AddCircle } from "grommet-icons";
 import Loader from "./Loader";
-import * as actions from "../actions/actions";
+import * as actions from "../actions";
 import theme from "../styles/theme";
 import FlexibleContainer from "./FlexibleContainer";
 
@@ -105,7 +105,7 @@ const RoomEntry = ({ room, dispatch, user }) => (
 
 function mapStateToProps(state) {
   return {
-    token: state.jwt,
+    token: state.token,
     loading: !!state.loadingRooms,
     rooms: state.rooms,
     user: state.user,

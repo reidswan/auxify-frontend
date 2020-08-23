@@ -1,9 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Box, Heading, Form, FormField, Button, TextInput } from "grommet";
-import { Next, Spotify } from "grommet-icons";
+import { Next } from "grommet-icons";
 import Loader from "./Loader";
-import { fetchRooms } from "../actions/actions";
+import { fetchRooms } from "../actions";
 import FlexibleContainer from "./FlexibleContainer";
 import SpotifyAuth from "./SpotifyAuth";
 
@@ -83,7 +83,7 @@ const CreateRoomForm = ({ loading, dispatch }) => {
 
 function mapStateToProps(state) {
   return {
-    token: state.jwt,
+    token: state.token,
     loading: !!state.processingCreateRoom,
     rooms: state.rooms,
     user: state.user,

@@ -1,10 +1,11 @@
 import React from "react";
-import { Box, Button, Heading } from "grommet";
-import { User } from "grommet-icons";
+import { Box, Heading, Menu } from "grommet";
+import { User, Lock } from "grommet-icons";
 import iconImage from "../img/minimal-white.svg";
 import AppBar from "./AppBar";
 import { connect } from "react-redux";
-import { redirect } from "../actions/actions";
+import { redirect, logout } from "../actions";
+import { isTokenExpired } from "../utils";
 
 const Icon = (props) => {
   const styleWithDefaults = {
@@ -17,7 +18,7 @@ const Icon = (props) => {
     borderRadius: "100%",
     ...props,
   };
-  
+
   return (
     <img
       src={iconImage}
@@ -30,6 +31,9 @@ const Icon = (props) => {
 };
 
 const AppHeader = (props) => {
+  let loggedIn = !!props.token && !isTokenExpired(props.token);
+  let icon = loggedIn ? <User /> : <Lock />;
+
   return (
     <AppBar>
       <Box
@@ -45,13 +49,22 @@ const AppHeader = (props) => {
           Auxify
         </Heading>
       </Box>
-      <Button icon={<User />} onClick={() => console.log("clicked right")} />
+      <Menu
+        icon={icon}
+        dropBackground={{ color: "focusBackground", opacity: "strong" }}
+        dropAlign={{ top: "bottom", right: "right" }}
+        focusIndicator={false}
+        disabled={!loggedIn}
+        items={[{ label: "Logout", onClick: () => props.dispatch(logout()) }]}
+      />
     </AppBar>
   );
 };
 
 function mapStateToProps(state) {
-  return {};
+  return {
+    token: state.token,
+  };
 }
 
 export default connect(mapStateToProps)(AppHeader);

@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from 'react-redux';
-import { fetchRooms } from '../actions/actions';
+import { fetchRooms } from '../actions';
 
 class Room extends React.Component {
 
@@ -23,7 +23,7 @@ class Room extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    token: state.jwt,
+    token: state.token,
     loading: !!state.loadingRooms,
     rooms: state.rooms
   };
