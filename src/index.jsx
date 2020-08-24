@@ -21,11 +21,8 @@ const store = createStore(reducer, applyMiddleware(thunk));
 
 let token = loadToken();
 if (!!token) {
-  console.log("YES", token)
   store.dispatch(actions.setToken(token));
   store.dispatch(actions.fetchUser());
-} else {
-  console.log("NO")
 }
 
 const App = ({ store }) => {

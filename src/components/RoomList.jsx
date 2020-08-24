@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Box, Heading, Button } from "grommet";
-import { FormNext, AddCircle } from "grommet-icons";
+import { Box, Heading, Button, Text } from "grommet";
+import { FormNext, AddCircle, FormRefresh } from "grommet-icons";
 import Loader from "./Loader";
 import * as actions from "../actions";
 import theme from "../styles/theme";
@@ -15,7 +15,6 @@ class RoomList extends React.Component {
   };
 
   render = () => {
-    
     return (
       <FlexibleContainer
         pad={{ top: "none", horizontal: "none", bottom: "medium" }}
@@ -51,7 +50,27 @@ class RoomList extends React.Component {
             justify="center"
             style={{ minHeight: "50px" }}
           >
-            <Loader loading color={theme.global.colors.brand} size="40px"/>
+            <Loader loading color={theme.global.colors.brand} size="40px" />
+          </Box>
+        ) : this.props.error ? (
+          <Box
+            flex
+            pad={{ vertical: "xsmall" }}
+            align="center"
+            justify="between"
+            style={{ minHeight: "100px" }}
+          >
+            <Text size="large" color="status-critical">
+              Failed to load rooms.
+            </Text>
+            <Button
+              primary
+              color="status-critical"
+              size="medium"
+              icon={<FormRefresh />}
+              label="Retry"
+              onClick={() => this.props.dispatch(actions.fetchRooms())}
+            />
           </Box>
         ) : !!this.props.rooms ? (
           this.props.rooms.map((room) => (
@@ -79,8 +98,10 @@ const NoRooms = () => (
   </Box>
 );
 
-const Badge = ({children, ...props}) => (
-  <h5 style={{ color: theme.global.colors.brand }} {...props}>{children}</h5>
+const Badge = ({ children, ...props }) => (
+  <h5 style={{ color: theme.global.colors.brand }} {...props}>
+    {children}
+  </h5>
 );
 
 const RoomEntry = ({ room, dispatch, user }) => (
@@ -107,6 +128,7 @@ function mapStateToProps(state) {
   return {
     token: state.token,
     loading: !!state.loadingRooms,
+    error: !!state.fetchRoomsError,
     rooms: state.rooms,
     user: state.user,
   };

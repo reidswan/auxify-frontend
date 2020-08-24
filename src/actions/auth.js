@@ -6,6 +6,7 @@ import history from "../history";
 
 export const FETCH_USER = asyncActionsCreator("FETCH_USER");
 export const AUTH_WITH_SPOTIFY = asyncActionsCreator("AUTH_WITH_SPOTIFY");
+export const SPOTIFY_CALLBACK = asyncActionsCreator("SPOTIFY_CALLBACK");
 export const LOGIN = asyncActionsCreator("LOGIN");
 
 /**
@@ -58,8 +59,35 @@ function _getSpotifyAuthURL() {
           Authorization: `Bearer ${token}`,
         },
       })
-      .then((result) => dispatch(AUTH_WITH_SPOTIFY.success(result.data)))
+      .then((result) => {
+        dispatch(AUTH_WITH_SPOTIFY.success(result.data));
+        if (!!result.data && typeof result.data.url === "string") {
+          document.location.href = result.data.url;
+        }
+      })
       .catch((err) => dispatch(AUTH_WITH_SPOTIFY.failure(err)));
+  };
+}
+
+/**
+ * send the callback data back to the server
+ * @param {URLSearchParams} callbackParams the <?...> part of the spotify callback 
+ */
+function _spotifyCallback(callbackParams) {
+  return (dispatch, getState) => {
+    dispatch(SPOTIFY_CALLBACK.begin());
+
+    let token = getState().token;
+    return axios
+      .get(`http://localhost:8080/callback?${callbackParams}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((result) => {
+        dispatch(SPOTIFY_CALLBACK.success(result.data));
+      })
+      .catch((err) => dispatch(SPOTIFY_CALLBACK.failure(err)));
   };
 }
 
@@ -71,8 +99,8 @@ export function login(email, password) {
       .post("http://localhost:8080/login", { email, password })
       .then((result) => {
         storeToken(result.data.token);
+        dispatch(LOGIN.success(result.data));
         history.push("/");
-        dispatch(LOGIN.success(result.data))
       })
       .catch((err) => dispatch(LOGIN.failure(err)));
   };
@@ -80,6 +108,7 @@ export function login(email, password) {
 
 export const fetchUser = requiresUserLogin(_fetchUser);
 export const getSpotifyAuthURL = requiresUserLogin(_getSpotifyAuthURL);
+export const spotifyCallback = requiresUserLogin(_spotifyCallback);
 
 export const SET_TOKEN = "SET_TOKEN";
 export function setToken(token) {

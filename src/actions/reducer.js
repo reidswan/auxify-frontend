@@ -8,9 +8,14 @@ const initialState = {
   rooms: null,
   loadingUser: false,
   loadingRooms: false,
+  fetchRoomsError: false,
   processingCreateRoom: false,
   processingLogin: false,
   loginError: false,
+  processingSpotifyAuth: false,
+  processingCallback: false,
+  callbackError: false,
+  callbackSuccess: false
 };
 
 export function reducer(state = initialState, action) {
@@ -36,11 +41,13 @@ export function reducer(state = initialState, action) {
       return {
         ...state,
         loadingRooms: true,
+        fetchRoomsError: false
       };
     case actions.FETCH_ROOMS.SUCCESS:
       return {
         ...state,
         loadingRooms: false,
+        fetchRoomsError: false,
         rooms: action.data.rooms,
       };
     case actions.FETCH_ROOMS.FAILURE:
@@ -48,6 +55,7 @@ export function reducer(state = initialState, action) {
       return {
         ...state,
         loadingRooms: false,
+        fetchRoomsError: true
       };
     case actions.REDIRECT:
       history.push(action.location);
@@ -78,6 +86,50 @@ export function reducer(state = initialState, action) {
         ...state,
         token: action.token,
       };
+    case actions.AUTH_WITH_SPOTIFY.BEGIN:
+      return {
+        ...state,
+        processingSpotifyAuth: true
+      }
+    case actions.AUTH_WITH_SPOTIFY.SUCCESS:
+      return {
+        ...state,
+        processingSpotifyAuth: false
+      }
+    case actions.AUTH_WITH_SPOTIFY.FAILURE:
+      return {
+        ...state,
+        processingSpotifyAuth: false
+      }
+    case actions.SPOTIFY_CALLBACK.BEGIN:
+      return {
+        ...state,
+        processingCallback: true,
+        callbackSuccess: false,
+        callbackError: false,
+      }
+    case actions.SPOTIFY_CALLBACK.SUCCESS:
+      return {
+        ...state,
+        processingCallback: false,
+        callbackError: false,
+        callbackSuccess: true
+      }
+    case actions.SPOTIFY_CALLBACK.FAILURE:
+      return {
+        ...state,
+        processingCallback: false,
+        callbackError: true,
+        callbackSuccess: false
+      }
+    case actions.SPOTIFY_CALLBACK.CLEAR:
+      // reset in case we need to re-attempt
+      return {
+        ...state,
+        processingCallback: false,
+        callbackError: false,
+        callbackSuccess: false
+      }
     default:
       return state;
   }

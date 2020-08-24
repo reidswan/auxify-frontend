@@ -2,37 +2,49 @@ export const REDIRECT = "REDIRECT";
 
 export function redirect(to) {
   return {
-    "type": REDIRECT,
-    "location": to
-  }
+    type: REDIRECT,
+    location: to,
+  };
 }
 
 export function asyncActionsCreator(prefix) {
   let BEGIN = `${prefix}_BEGIN`;
   let SUCCESS = `${prefix}_SUCCESS`;
-  let FAILURE =`${prefix}_FAILURE`;
+  let FAILURE = `${prefix}_FAILURE`;
+  let CLEAR = `${prefix}_CLEAR`;
 
   let begin = () => {
     return {
-      "type": BEGIN
-    }
+      type: BEGIN,
+    };
   };
 
   let success = (data) => {
     return {
-      "type": SUCCESS,
-      "data": data
-    }
+      type: SUCCESS,
+      data: data,
+    };
   };
 
   let failure = (err) => {
     return {
-      "type": FAILURE,
-      "err": err
-    }
+      type: FAILURE,
+      err: err,
+    };
+  };
+
+  let clear = () => {
+    return { type: CLEAR };
   };
 
   return {
-    BEGIN, SUCCESS, FAILURE, begin, success, failure
-  }
+    BEGIN,
+    SUCCESS,
+    FAILURE,
+    CLEAR,
+    begin,
+    success,
+    failure,
+    clear
+  };
 }

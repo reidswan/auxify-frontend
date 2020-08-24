@@ -7,6 +7,7 @@ import RoomList from "./RoomList";
 import Room from "./Room";
 import CreateRoom from "./CreateRoom";
 import Auth from "./Auth";
+import { SpotifyCallback } from "./SpotifyAuth";
 
 const PrivateRoute = (props) => props.loggedIn ? 
   <Route {...props} /> :
@@ -23,6 +24,7 @@ const Body = (props) => {
           <PrivateRoute exact path="/" component={RoomList} loggedIn={loggedIn} />
           <PrivateRoute exact path="/room/:roomId" component={Room} loggedIn={loggedIn} />
           <PrivateRoute exact path="/create_room" component={CreateRoom} loggedIn={loggedIn} />
+          <PrivateRoute exact path="/callback" component={SpotifyCallback} loggedIn={loggedIn} />
         </Switch>
       </Router>
     </Box>

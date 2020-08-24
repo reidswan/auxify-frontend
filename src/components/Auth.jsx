@@ -61,4 +61,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(CreateRoom);
+export default connect(mapStateToProps)(Auth);
