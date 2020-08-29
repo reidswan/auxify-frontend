@@ -1,14 +1,13 @@
 import React from "react";
-import { connect } from 'react-redux';
-import { fetchRooms } from '../actions';
+import { connect } from "react-redux";
+import { fetchRooms } from "../actions";
 
 class Room extends React.Component {
-
   componentDidMount = () => {
     if (!this.props.rooms) {
-      this.props.dispatch(fetchRooms())
+      this.props.dispatch(fetchRooms());
     }
-  }
+  };
 
   render = () => {
     const { roomId } = this.props.match.params;
@@ -18,14 +17,14 @@ class Room extends React.Component {
         <h2>{!!roomId ? `Room #${roomId}` : "No room id"}</h2>
       </div>
     );
-  }
+  };
 }
 
 function mapStateToProps(state) {
   return {
-    token: state.jwt,
+    token: state.token,
     loading: !!state.loadingRooms,
-    rooms: state.rooms
+    rooms: state.rooms,
   };
 }
 
