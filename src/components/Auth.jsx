@@ -1,15 +1,27 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Box, Heading, Form, FormField, Button, TextInput, Text } from "grommet";
+import {
+  Box,
+  Heading,
+  Form,
+  FormField,
+  Button,
+  TextInput,
+  Text,
+} from "grommet";
 import { Next } from "grommet-icons";
 import Loader from "./Loader";
 import FlexibleContainer from "./FlexibleContainer";
-import { login } from "../actions"
+import { login } from "../actions";
+import theme from "../styles/theme";
 
 class Auth extends React.Component {
-
   render = () => {
-    let icon = this.props.loading ? <Loader size="20px" color="black" /> : <Next />;
+    let icon = this.props.loading ? (
+      <Loader size="20px" color="black" />
+    ) : (
+      <Next />
+    );
     return (
       <FlexibleContainer a11yTitle="Form for logging in">
         <Box
@@ -30,7 +42,9 @@ class Auth extends React.Component {
         </Box>
         <Box pad={{ vertical: "small", horizontal: "medium" }}>
           <Form
-            onSubmit={({ value }) => this.props.dispatch(login(value.email, value.password))}
+            onSubmit={({ value }) =>
+              this.props.dispatch(login(value.email, value.password))
+            }
           >
             <FormField name="email" htmlfor="email_input" label="Email">
               <TextInput id="email_input" name="email" required />
@@ -43,9 +57,22 @@ class Auth extends React.Component {
                 type="password"
               />
             </FormField>
-            {this.props.error && <Text size="small" color="status-critical">Login failed; please check details and try again</Text>}
+            {this.props.error && (
+              <Text size="small" color="status-critical">
+                Login failed; please check details and try again
+              </Text>
+            )}
             <Box direction="row" justify="end" pad={{ top: "medium" }}>
-              <Button reverse primary type="submit" icon={icon} size="medium" label="Log in" disabled={this.props.loading}/>
+              <Button
+                reverse
+                primary
+                type="submit"
+                icon={icon}
+                size="medium"
+                label="Log in"
+                disabled={this.props.loading}
+                color={theme.global.colors.brand}
+              />
             </Box>
           </Form>
         </Box>
@@ -57,7 +84,7 @@ class Auth extends React.Component {
 function mapStateToProps(state) {
   return {
     loading: state.processingLogin,
-    error: state.loginError
+    error: state.loginError,
   };
 }
 

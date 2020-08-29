@@ -9,9 +9,8 @@ import CreateRoom from "./CreateRoom";
 import Auth from "./Auth";
 import { SpotifyCallback } from "./SpotifyAuth";
 
-const PrivateRoute = (props) => props.loggedIn ? 
-  <Route {...props} /> :
-  <Redirect to="/login" />;
+const PrivateRoute = (props) =>
+  props.loggedIn ? <Route {...props} /> : <Redirect to="/login" />;
 
 const Body = (props) => {
   let loggedIn = !!props.token && !isTokenExpired(props.token);
@@ -21,10 +20,30 @@ const Body = (props) => {
       <Router history={props.history}>
         <Switch>
           <Route exact path="/login" component={Auth} />
-          <PrivateRoute exact path="/" component={RoomList} loggedIn={loggedIn} />
-          <PrivateRoute exact path="/room/:roomId" component={Room} loggedIn={loggedIn} />
-          <PrivateRoute exact path="/create_room" component={CreateRoom} loggedIn={loggedIn} />
-          <PrivateRoute exact path="/callback" component={SpotifyCallback} loggedIn={loggedIn} />
+          <PrivateRoute
+            exact
+            path="/"
+            component={RoomList}
+            loggedIn={loggedIn}
+          />
+          <PrivateRoute
+            exact
+            path="/room/:roomId"
+            component={Room}
+            loggedIn={loggedIn}
+          />
+          <PrivateRoute
+            exact
+            path="/create_room"
+            component={CreateRoom}
+            loggedIn={loggedIn}
+          />
+          <PrivateRoute
+            exact
+            path="/callback"
+            component={SpotifyCallback}
+            loggedIn={loggedIn}
+          />
         </Switch>
       </Router>
     </Box>
@@ -33,8 +52,8 @@ const Body = (props) => {
 
 function mapStateToProps(state) {
   return {
-    token: state.token
-  }
+    token: state.token,
+  };
 }
 
 export default connect(mapStateToProps)(Body);

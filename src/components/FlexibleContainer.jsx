@@ -3,9 +3,9 @@ import { Box } from "grommet";
 
 const DEFAULT_STYLE = {
   minHeight: "150px",
-  width: "75vw",
+  width: "80vw",
   maxWidth: "700px",
-  minWidth: "320px",
+  minWidth: "350px",
 };
 
 export default (props) => {

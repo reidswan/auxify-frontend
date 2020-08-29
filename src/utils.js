@@ -1,5 +1,5 @@
-import jwtDecode from "jwt-decode"
-import Cookies from "universal-cookie"
+import jwtDecode from "jwt-decode";
+import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
 

@@ -6,7 +6,7 @@ import { keyframes, css, jsx } from "@emotion/core";
 const commonValues = {
   loading: true,
   color: "#000000",
-  css: ""
+  css: "",
 };
 
 export function sizeDefaults(sizeValue) {

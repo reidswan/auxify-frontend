@@ -1,5 +1,6 @@
 import * as actions from ".";
 import history from "../history";
+import { handlers as roomHandlers } from "./room";
 
 const initialState = {
   count: 0,
@@ -10,15 +11,27 @@ const initialState = {
   loadingRooms: false,
   fetchRoomsError: false,
   processingCreateRoom: false,
+  createRoomError: false,
   processingLogin: false,
   loginError: false,
   processingSpotifyAuth: false,
   processingCallback: false,
   callbackError: false,
-  callbackSuccess: false
+  callbackSuccess: false,
 };
 
-export function reducer(state = initialState, action) {
+function handlerBasedReducer(initialState, handlers) {
+  return function (state = initialState, action) {
+    const handler = handlers[action.type];
+    if (!!handler) {
+      return handler(state, action);
+    } else {
+      return switchReducer(state, action);
+    }
+  };
+}
+
+function switchReducer(state = initialState, action) {
   switch (action.type) {
     case actions.FETCH_USER.BEGIN:
       return {
@@ -36,26 +49,6 @@ export function reducer(state = initialState, action) {
       return {
         ...state,
         loadingUser: false,
-      };
-    case actions.FETCH_ROOMS.BEGIN:
-      return {
-        ...state,
-        loadingRooms: true,
-        fetchRoomsError: false
-      };
-    case actions.FETCH_ROOMS.SUCCESS:
-      return {
-        ...state,
-        loadingRooms: false,
-        fetchRoomsError: false,
-        rooms: action.data.rooms,
-      };
-    case actions.FETCH_ROOMS.FAILURE:
-      console.log(action.err);
-      return {
-        ...state,
-        loadingRooms: false,
-        fetchRoomsError: true
       };
     case actions.REDIRECT:
       history.push(action.location);
@@ -89,48 +82,54 @@ export function reducer(state = initialState, action) {
     case actions.AUTH_WITH_SPOTIFY.BEGIN:
       return {
         ...state,
-        processingSpotifyAuth: true
-      }
+        processingSpotifyAuth: true,
+      };
     case actions.AUTH_WITH_SPOTIFY.SUCCESS:
       return {
         ...state,
-        processingSpotifyAuth: false
-      }
+        processingSpotifyAuth: false,
+      };
     case actions.AUTH_WITH_SPOTIFY.FAILURE:
       return {
         ...state,
-        processingSpotifyAuth: false
-      }
+        processingSpotifyAuth: false,
+      };
     case actions.SPOTIFY_CALLBACK.BEGIN:
       return {
         ...state,
         processingCallback: true,
         callbackSuccess: false,
         callbackError: false,
-      }
+      };
     case actions.SPOTIFY_CALLBACK.SUCCESS:
       return {
         ...state,
         processingCallback: false,
         callbackError: false,
-        callbackSuccess: true
-      }
+        callbackSuccess: true,
+      };
     case actions.SPOTIFY_CALLBACK.FAILURE:
       return {
         ...state,
         processingCallback: false,
         callbackError: true,
-        callbackSuccess: false
-      }
+        callbackSuccess: false,
+      };
     case actions.SPOTIFY_CALLBACK.CLEAR:
       // reset in case we need to re-attempt
       return {
         ...state,
         processingCallback: false,
         callbackError: false,
-        callbackSuccess: false
-      }
+        callbackSuccess: false,
+      };
     default:
       return state;
   }
 }
+
+const handlers = {
+  ...roomHandlers,
+};
+
+export const reducer = handlerBasedReducer(initialState, handlers);

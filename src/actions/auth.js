@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "./api";
 import { isTokenExpired, storeToken } from "../utils";
 import { asyncActionsCreator, redirect } from "./common";
 import { clearToken } from "../utils";
@@ -37,12 +37,8 @@ function _fetchUser() {
   return (dispatch, getState) => {
     dispatch(FETCH_USER.begin());
     let token = getState().token;
-    return axios
-      .get("http://localhost:8080/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+    return api
+      .get("/me", token)
       .then((result) => dispatch(FETCH_USER.success(result.data)))
       .catch((err) => dispatch(FETCH_USER.failure(err)));
   };
@@ -53,12 +49,8 @@ function _getSpotifyAuthURL() {
     dispatch(AUTH_WITH_SPOTIFY.begin());
 
     let token = getState().token;
-    return axios
-      .get("http://localhost:8080/spotify_auth", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+    return api
+      .get("/spotify_auth", token)
       .then((result) => {
         dispatch(AUTH_WITH_SPOTIFY.success(result.data));
         if (!!result.data && typeof result.data.url === "string") {
@@ -71,19 +63,15 @@ function _getSpotifyAuthURL() {
 
 /**
  * send the callback data back to the server
- * @param {URLSearchParams} callbackParams the <?...> part of the spotify callback 
+ * @param {URLSearchParams} callbackParams the <?...> part of the spotify callback
  */
 function _spotifyCallback(callbackParams) {
   return (dispatch, getState) => {
     dispatch(SPOTIFY_CALLBACK.begin());
 
     let token = getState().token;
-    return axios
-      .get(`http://localhost:8080/callback?${callbackParams}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+    return api
+      .get(`/callback?${callbackParams}`, token)
       .then((result) => {
         dispatch(SPOTIFY_CALLBACK.success(result.data));
       })
@@ -95,8 +83,8 @@ export function login(email, password) {
   return (dispatch, getState) => {
     dispatch(LOGIN.begin());
 
-    return axios
-      .post("http://localhost:8080/login", { email, password })
+    return api
+      .post("/login", { email, password })
       .then((result) => {
         storeToken(result.data.token);
         dispatch(LOGIN.success(result.data));
@@ -122,6 +110,6 @@ export const LOGOUT = "LOGOUT";
 export function logout() {
   clearToken();
   return {
-    type: LOGOUT
-  }
+    type: LOGOUT,
+  };
 }

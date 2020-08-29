@@ -8,7 +8,7 @@ import {
   getSpotifyAuthURL,
   spotifyCallback,
   SPOTIFY_CALLBACK,
-  fetchUser
+  fetchUser,
 } from "../actions";
 import FlexibleContainer from "./FlexibleContainer";
 import { Redirect } from "react-router-dom";

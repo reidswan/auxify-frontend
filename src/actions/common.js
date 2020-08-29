@@ -45,6 +45,6 @@ export function asyncActionsCreator(prefix) {
     begin,
     success,
     failure,
-    clear
+    clear,
   };
 }
