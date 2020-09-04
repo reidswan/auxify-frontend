@@ -5,6 +5,7 @@ export default {
       highlight: "#1db954",
       background: "black",
       focusBackground: "#0f0f0f",
+      border: "brand",
     },
     font: {
       family: "Montserrat",
