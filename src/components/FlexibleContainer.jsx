@@ -23,6 +23,7 @@ export default (props) => {
       margin={{ top: "10vh" }}
       justify="start"
       style={style}
+      flex={false}
       {...props}
     ></Box>
   );

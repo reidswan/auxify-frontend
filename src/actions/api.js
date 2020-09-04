@@ -22,4 +22,14 @@ export function post(route, body, token, config = {}) {
   return axios.post(`${HOST}${actualRoute}`, body, config);
 }
 
-export default { get, post };
+export function put(route, body, token, config = {}) {
+  if (!!token) {
+    config.headers = {
+      Authorization: `Bearer ${token}`,
+    };
+  }
+  let actualRoute = route.startsWith("/") ? route : "/" + route;
+  return axios.put(`${HOST}${actualRoute}`, body, config);
+}
+
+export default { get, post, put };

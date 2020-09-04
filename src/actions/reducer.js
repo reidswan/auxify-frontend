@@ -18,6 +18,15 @@ const initialState = {
   processingCallback: false,
   callbackError: false,
   callbackSuccess: false,
+  fetchRoomByIdLoading: false,
+  fetchRoomByIdError: false,
+  currentRoom: null,
+  search: {
+    loading: false,
+    error: false,
+    results: [],
+  },
+  enqueue: {},
 };
 
 function handlerBasedReducer(initialState, handlers) {
