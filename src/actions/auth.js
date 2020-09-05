@@ -113,3 +113,99 @@ export function logout() {
     type: LOGOUT,
   };
 }
+
+export const authHandlers = {
+  [FETCH_USER.BEGIN]: (state, action) => {
+    return {
+      ...state,
+      loadingUser: true,
+    };
+  },
+  [FETCH_USER.SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      loadingUser: false,
+      user: action.data,
+    };
+  },
+  [FETCH_USER.FAILURE]: (state, action) => {
+    console.log(action.err);
+    return {
+      ...state,
+      loadingUser: false,
+    };
+  },
+  [LOGIN.BEGIN]: (state, action) => {
+    return {
+      ...state,
+      processingLogin: true,
+      loginError: false,
+    };
+  },
+  [LOGIN.SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      processingLogin: false,
+      loginError: false,
+      token: action.data.token,
+    };
+  },
+  [LOGIN.FAILURE]: (state, action) => {
+    return {
+      ...state,
+      processingLogin: false,
+      loginError: true,
+    };
+  },
+  [AUTH_WITH_SPOTIFY.BEGIN]: (state, action) => {
+    return {
+      ...state,
+      processingSpotifyAuth: true,
+    };
+  },
+  [AUTH_WITH_SPOTIFY.SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      processingSpotifyAuth: false,
+    };
+  },
+  [AUTH_WITH_SPOTIFY.FAILURE]: (state, action) => {
+    return {
+      ...state,
+      processingSpotifyAuth: false,
+    };
+  },
+  [SPOTIFY_CALLBACK.BEGIN]: (state, action) => {
+    return {
+      ...state,
+      processingCallback: true,
+      callbackSuccess: false,
+      callbackError: false,
+    };
+  },
+  [SPOTIFY_CALLBACK.SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      processingCallback: false,
+      callbackError: false,
+      callbackSuccess: true,
+    };
+  },
+  [SPOTIFY_CALLBACK.FAILURE]: (state, action) => {
+    return {
+      ...state,
+      processingCallback: false,
+      callbackError: true,
+      callbackSuccess: false,
+    };
+  },
+  [SPOTIFY_CALLBACK.CLEAR]: (state, action) => {
+    // reset in case we need to re-attempt
+    return {
+      ...state,
+      processingCallback: false,
+      callbackError: false,
+      callbackSuccess: false,
+    };
+  },
+};

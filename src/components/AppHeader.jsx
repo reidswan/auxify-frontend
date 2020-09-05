@@ -32,7 +32,11 @@ const Icon = (props) => {
 
 const AppHeader = (props) => {
   let loggedIn = !!props.token && !isTokenExpired(props.token);
-  let icon = loggedIn ? <User /> : <Lock />;
+  let icon = loggedIn ? (
+    <User alt="User menu icon" />
+  ) : (
+    <Lock alt="App locked icon" />
+  );
 
   return (
     <AppBar>
