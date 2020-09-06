@@ -13,12 +13,16 @@ const initialState = {
   fetchRoomsError: false,
   processingCreateRoom: false,
   createRoomError: false,
-  processingLogin: false,
-  loginError: false,
+  login: {
+    loading: false,
+    error: false,
+  },
   processingSpotifyAuth: false,
-  processingCallback: false,
-  callbackError: false,
-  callbackSuccess: false,
+  callback: {
+    loading: false,
+    error: false,
+    success: false,
+  },
   currentRoom: {
     loading: false,
     error: false,

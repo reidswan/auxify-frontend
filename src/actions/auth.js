@@ -19,7 +19,7 @@ export const LOGIN = asyncActionsCreator("LOGIN");
  */
 export function requiresUserLogin(f, requireUser = false, requireToken = true) {
   return (...args) => {
-    return (dispatch, getState) => {
+    let fn = (dispatch, getState) => {
       let state = getState();
       let hasValidToken = !!state.token && !isTokenExpired(state.token);
       if (requireToken && !hasValidToken) {
@@ -30,6 +30,12 @@ export function requiresUserLogin(f, requireUser = false, requireToken = true) {
         f(...args)(dispatch, () => state);
       }
     };
+    // deanonymize the function for testing purposes
+    Object.defineProperty(fn, "name", {
+      value: f.name.replace("_", ""),
+      configurable: true,
+    });
+    return fn;
   };
 }
 
@@ -138,23 +144,23 @@ export const authHandlers = {
   [LOGIN.BEGIN]: (state, action) => {
     return {
       ...state,
-      processingLogin: true,
-      loginError: false,
+      login: {
+        loading: true,
+        error: false,
+      },
     };
   },
   [LOGIN.SUCCESS]: (state, action) => {
     return {
       ...state,
-      processingLogin: false,
-      loginError: false,
+      login: { loading: false, error: false },
       token: action.data.token,
     };
   },
   [LOGIN.FAILURE]: (state, action) => {
     return {
       ...state,
-      processingLogin: false,
-      loginError: true,
+      login: { loading: false, error: true },
     };
   },
   [AUTH_WITH_SPOTIFY.BEGIN]: (state, action) => {
@@ -178,34 +184,42 @@ export const authHandlers = {
   [SPOTIFY_CALLBACK.BEGIN]: (state, action) => {
     return {
       ...state,
-      processingCallback: true,
-      callbackSuccess: false,
-      callbackError: false,
+      callback: {
+        loading: true,
+        success: false,
+        error: false,
+      },
     };
   },
   [SPOTIFY_CALLBACK.SUCCESS]: (state, action) => {
     return {
       ...state,
-      processingCallback: false,
-      callbackError: false,
-      callbackSuccess: true,
+      callback: {
+        loading: false,
+        error: false,
+        success: true,
+      },
     };
   },
   [SPOTIFY_CALLBACK.FAILURE]: (state, action) => {
     return {
       ...state,
-      processingCallback: false,
-      callbackError: true,
-      callbackSuccess: false,
+      callback: {
+        loading: false,
+        error: true,
+        success: false,
+      },
     };
   },
   [SPOTIFY_CALLBACK.CLEAR]: (state, action) => {
     // reset in case we need to re-attempt
     return {
       ...state,
-      processingCallback: false,
-      callbackError: false,
-      callbackSuccess: false,
+      callback: {
+        loading: false,
+        error: false,
+        success: false,
+      },
     };
   },
 };

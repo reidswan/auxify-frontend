@@ -49,21 +49,6 @@ test("search handler", () => {
   expect(nextState).toStrictEqual(startState);
 });
 
-test("logout handler", () => {
-  let initialState = reducer(undefined, { type: "test" });
-
-  let modifiedState = {
-    ...initialState,
-    token: "something",
-    user: { name: "john", surname: "smith", otherData: "some other stuff" },
-    rooms: [1, 2, 3],
-  };
-
-  let nextState = reducer(modifiedState, actions.logout());
-
-  expect(nextState).toStrictEqual(initialState);
-});
-
 test("enqueue begin handler", () => {
   let initialState = {
     shouldNotBeModified,

@@ -35,11 +35,7 @@ const SpotifyAuthButton = (props) => (
 function mapStateToProps(state) {
   return {
     loading: state.processingSpotifyAuth,
-    callback: {
-      loading: state.processingCallback,
-      error: state.callbackError,
-      success: state.callbackSuccess,
-    },
+    callback: state.callback,
   };
 }
 
@@ -91,9 +87,8 @@ const _SpotifyCallback = (props) => {
   if (error) {
     return <FailedSpotifyAuth {...props} />;
   }
-
   if (!props.callback.loading && !props.callback.success) {
-    // looks like we haven't forwarded the callback to the
+    // looks like we haven't forwarded the callback to the server
     props.dispatch(spotifyCallback(queryParams));
   } else if (props.callback.success) {
     // refresh the user object

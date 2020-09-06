@@ -83,8 +83,8 @@ class Auth extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    loading: state.processingLogin,
-    error: state.loginError,
+    loading: state.login.loading,
+    error: state.login.error,
   };
 }
 
