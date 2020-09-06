@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Box, Heading, TextInput, Text, Keyboard } from "grommet";
+import { Box, Heading, TextInput, Text, Keyboard, Button } from "grommet";
 import { Search, DocumentMissing, Next, Alert, Refresh } from "grommet-icons";
 import theme from "../styles/theme.js";
 import { fetchRoomById, redirect, search, SEARCH, enqueue } from "../actions";
@@ -21,6 +21,10 @@ class Room extends React.Component {
   }
 
   componentDidMount = () => {
+    this.loadInitialData();
+  };
+
+  loadInitialData = () => {
     const { roomId } = this.props.match.params;
     if (!roomId || isNaN(parseInt(roomId))) {
       this.props.dispatch(redirect("/"));
@@ -49,6 +53,24 @@ class Room extends React.Component {
       this.setState({ searchTimeout: null });
       this.props.dispatch(SEARCH.clear());
     }
+  };
+
+  loadFailed = () => {
+    return (
+      <Box flex align="center" justify="between" style={{ minHeight: "80px" }}>
+        <Text color="status-critical" size="large">
+          Failed to load the room
+        </Text>
+        <Button
+          primary
+          color="status-critical"
+          size="medium"
+          icon={<Refresh />}
+          label="Retry"
+          onClick={this.loadInitialData}
+        />
+      </Box>
+    );
   };
 
   render = () => {
@@ -82,7 +104,9 @@ class Room extends React.Component {
           align="center"
           pad={{ horizontal: "medium", top: "medium" }}
         >
-          {loading ? (
+          {this.props.error ? (
+            this.loadFailed()
+          ) : loading ? (
             <Loader size="40px" color={theme.global.colors.brand} />
           ) : (
             <Keyboard onEnter={this.loadSearchResults}>
@@ -193,9 +217,9 @@ function imageWithClosestWidth(images, width) {
 
 function mapStateToProps(state) {
   return {
-    loading: state.fetchRoomByIdLoading,
-    error: state.fetchRoomByIdError,
-    room: state.currentRoom,
+    loading: state.currentRoom.loading,
+    error: state.currentRoom.error,
+    room: state.currentRoom.data,
     search: state.search,
     enqueue: state.enqueue || {},
   };

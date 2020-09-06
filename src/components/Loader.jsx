@@ -9,6 +9,8 @@ const commonValues = {
   css: "",
 };
 
+let role = "Loading";
+
 export function sizeDefaults(sizeValue) {
   return Object.assign({}, commonValues, { size: sizeValue });
 }
@@ -41,7 +43,7 @@ class Loader extends React.PureComponent {
   render() {
     const { loading, css } = this.props;
 
-    return loading ? <div css={[this.style(), css]} /> : null;
+    return loading ? <div css={[this.style(), css]} role={role} /> : null;
   }
 }
 

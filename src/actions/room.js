@@ -127,7 +127,7 @@ function _enqueue(roomId, uri) {
 
 export const enqueue = requiresUserLogin(_enqueue);
 
-export const handlers = {
+export const roomHandlers = {
   [FETCH_ROOMS.BEGIN]: (state, action) => {
     return {
       ...state,
@@ -176,26 +176,32 @@ export const handlers = {
   [FETCH_ROOM_BY_ID.BEGIN]: (state, action) => {
     return {
       ...state,
-      fetchRoomByIdLoading: true,
-      fetchRoomByIdError: false,
-      currentRoom: null,
+      currentRoom: {
+        loading: true,
+        error: false,
+        data: null,
+      },
     };
   },
   [FETCH_ROOM_BY_ID.FAILURE]: (state, action) => {
     console.error(action.err);
     return {
       ...state,
-      fetchRoomByIdLoading: false,
-      fetchRoomByIdError: true,
-      currentRoom: null,
+      currentRoom: {
+        loading: false,
+        error: true,
+        data: null,
+      },
     };
   },
   [FETCH_ROOM_BY_ID.SUCCESS]: (state, action) => {
     return {
       ...state,
-      fetchRoomByIdLoading: false,
-      fetchRoomByIdError: false,
-      currentRoom: action.data,
+      currentRoom: {
+        loading: false,
+        error: false,
+        data: action.data,
+      },
     };
   },
   [SEARCH.BEGIN]: (state, action) => {
@@ -240,6 +246,30 @@ export const handlers = {
       },
     };
   },
+  /**
+   * What is [ENQUEUE.*] doing?
+   * Essentially, it tracks state in the following shape:
+   * enqueue: {
+   *  <roomId>: {
+   *    <trackUri>: { loading, error }
+   *  }
+   * }
+   * if enqueue.[roomId].[trackUri] is not present, this is assumed
+   * to mean success to prevent accumulating too much state over time
+   *
+   * So what is happening is that, on begin, we ensure that
+   * state.enqueue.[roomId] and ...[roomId].[uri] exist (with loading=true)
+   * The ...(state.enqueue ? state.enqueue[roomId] : {}) will ensure that
+   * an existing state.enqueue[roomId] is preserved (through cloning), not
+   * overwritten
+   *
+   * on failure, we perform similar checks but with error=true
+   *
+   * on success, we first clone (or create) the enqueue[roomId],
+   * then delete the [uri] property
+   *
+   * tests/room-handlers.test.js might provide more clarity? idk
+   */
   [ENQUEUE.BEGIN]: (state, action) => {
     let roomId = action.roomId;
     let uri = action.uri;
