@@ -31,6 +31,7 @@ const initialState = {
     loading: false,
     error: false,
     data: null,
+    notFound: false,
   },
   search: {
     loading: false,

@@ -180,17 +180,20 @@ export const roomHandlers = {
         loading: true,
         error: false,
         data: null,
+        notFound: false,
       },
     };
   },
   [FETCH_ROOM_BY_ID.FAILURE]: (state, action) => {
     console.error(action.err);
+    let notFound = !!action.err.response && action.err.response.status === 404;
     return {
       ...state,
       currentRoom: {
         loading: false,
-        error: true,
+        error: !notFound,
         data: null,
+        notFound,
       },
     };
   },
@@ -201,6 +204,7 @@ export const roomHandlers = {
         loading: false,
         error: false,
         data: action.data,
+        notFound: false,
       },
     };
   },

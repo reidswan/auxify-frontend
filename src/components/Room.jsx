@@ -6,6 +6,7 @@ import theme from "../styles/theme.js";
 import { fetchRoomById, redirect, search, SEARCH, enqueue } from "../actions";
 import Loader from "./Loader";
 import FlexibleContainer from "./FlexibleContainer";
+import NotFound from "./NotFound";
 
 // amount of time to wait in milliseconds before dispatching the search API call
 const SEARCH_INPUT_DEBOUNCE_MS = 250;
@@ -104,7 +105,9 @@ class Room extends React.Component {
           align="center"
           pad={{ horizontal: "medium", top: "medium" }}
         >
-          {this.props.error ? (
+          {this.props.notFound ? (
+            <NotFound message="It looks like this room doesn't exist." />
+          ) : this.props.error ? (
             this.loadFailed()
           ) : loading ? (
             <Loader size="40px" color={theme.global.colors.brand} />
@@ -220,6 +223,7 @@ function mapStateToProps(state) {
     loading: state.currentRoom.loading,
     error: state.currentRoom.error,
     room: state.currentRoom.data,
+    notFound: state.currentRoom.notFound,
     search: state.search,
     enqueue: state.enqueue || {},
   };

@@ -252,7 +252,7 @@ test("enqueue success handler", () => {
 test("fetch room by ID handler", () => {
   let initialState = {
     shouldNotBeModified,
-    currentRoom: { loading: false, error: false, data: null },
+    currentRoom: { loading: false, error: false, data: null, notFound: false },
   };
 
   let nextState = reducer(initialState, actions.FETCH_ROOM_BY_ID.begin());
@@ -262,6 +262,7 @@ test("fetch room by ID handler", () => {
     loading: true,
     error: false,
     data: null,
+    notFound: false,
   });
 
   nextState = reducer(nextState, actions.FETCH_ROOM_BY_ID.failure(":("));
@@ -269,6 +270,7 @@ test("fetch room by ID handler", () => {
     loading: false,
     error: true,
     data: null,
+    notFound: false,
   });
 
   let data = { roomId: 12, roomName: ":)" };
@@ -276,6 +278,16 @@ test("fetch room by ID handler", () => {
   expect(nextState.currentRoom).toStrictEqual({
     loading: false,
     error: false,
+    notFound: false,
     data,
+  });
+
+  let error = { response: { status: 404 } };
+  nextState = reducer(nextState, actions.FETCH_ROOM_BY_ID.failure(error));
+  expect(nextState.currentRoom).toStrictEqual({
+    loading: false,
+    error: false,
+    data: null,
+    notFound: true,
   });
 });
