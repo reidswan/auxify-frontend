@@ -17,6 +17,10 @@ const initialState = {
     loading: false,
     error: false,
   },
+  register: {
+    loading: false,
+    error: null,
+  },
   processingSpotifyAuth: false,
   callback: {
     loading: false,

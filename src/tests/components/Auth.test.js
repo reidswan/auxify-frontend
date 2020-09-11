@@ -34,3 +34,32 @@ test("Auth should show error message on error", () => {
   });
   expect(screen.getAllByText(/Login failed/i).length).toBe(1);
 });
+
+test("Register form should show error message on error", () => {
+  const detail = "some error";
+  render(<Auth initial="register" />, {
+    initialState: {
+      register: { loading: false, error: { response: { data: { detail } } } },
+    },
+  });
+  expect(screen.getAllByText(detail).length).toBe(1);
+});
+
+test("Register basic display test", () => {
+  render(<Auth initial="register" />, {
+    initialState: { register: { loading: false, error: null } },
+  });
+  // Log in header + button
+  expect(screen.getAllByText("Register").length).toBe(2);
+
+  expect(screen.getAllByText("Log in").length).toBe(1);
+  // registration fields
+  expect(screen.getAllByText("Email").length).toBe(1);
+  expect(screen.getAllByText("Password").length).toBe(1);
+  expect(screen.getAllByText("First name").length).toBe(1);
+  expect(screen.getAllByText("Confirm password").length).toBe(1);
+
+  // Auth should show loading spinner when not loading
+  let icons = screen.queryAllByRole("Loading");
+  expect(icons.length).toBe(0);
+});
