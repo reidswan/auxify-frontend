@@ -48,3 +48,7 @@ export function asyncActionsCreator(prefix) {
     clear,
   };
 }
+
+export function isNotFoundError(error) {
+  return !!error && !!error.response && error.response.status === 404;
+}

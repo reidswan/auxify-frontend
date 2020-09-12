@@ -1,6 +1,6 @@
 import React from "react";
 import thunk from "redux-thunk";
-import { MemoryRouter as Router, MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router-dom";
 import { SpotifyCallback } from "../../components/SpotifyAuth";
 import { render, screen, testRedirectsTo } from "../test-utils";
 import configureMockStore from "redux-mock-store";

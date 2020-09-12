@@ -151,7 +151,7 @@ export const authHandlers = {
     };
   },
   [FETCH_USER.FAILURE]: (state, action) => {
-    console.log(action.err);
+    console.error(action.err);
     return {
       ...state,
       loadingUser: false,
@@ -258,7 +258,7 @@ export const authHandlers = {
     };
   },
   [REGISTER.FAILURE]: (state, action) => {
-    console.log(action.err.response);
+    console.error(action.err);
     return {
       ...state,
       register: {

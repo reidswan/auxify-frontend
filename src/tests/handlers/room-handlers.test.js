@@ -10,6 +10,7 @@ test("search handler", () => {
       loading: false,
       error: false,
       results: [],
+      notFound: false,
     },
   };
 
@@ -19,6 +20,7 @@ test("search handler", () => {
     loading: true,
     error: false,
     results: [],
+    notFound: false,
   });
   expect(nextState.shouldNotBeModified).toBe(shouldNotBeModified);
 
@@ -34,6 +36,7 @@ test("search handler", () => {
     loading: false,
     error: false,
     results: searchResults,
+    notFound: false,
   });
 
   nextState = reducer(nextState, actions.SEARCH.failure({ err: "failed" }));
@@ -42,6 +45,19 @@ test("search handler", () => {
     loading: false,
     error: true,
     results: [],
+    notFound: false,
+  });
+
+  nextState = reducer(
+    nextState,
+    actions.SEARCH.failure({ response: { status: 404 } })
+  );
+
+  expect(nextState.search).toStrictEqual({
+    loading: false,
+    error: false,
+    results: [],
+    notFound: true,
   });
 
   nextState = reducer(nextState, actions.SEARCH.clear());

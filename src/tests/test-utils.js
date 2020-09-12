@@ -29,17 +29,20 @@ export function testRedirectsTo(
   redirectTo,
   Component,
   initialState,
-  initialPath = "/"
+  initialPath = "/",
+  initialPathPattern = undefined
 ) {
-  const history = createMemoryHistory([initialPath]);
-
-  render(
+  const history = createMemoryHistory();
+  history.push(initialPath);
+  initialPathPattern =
+    initialPathPattern === undefined ? initialPath : initialPathPattern;
+  let toRender = (
     <Router history={history}>
-      <Route path={initialPath} exact render={() => <Component />} />
+      <Route path={initialPathPattern} exact render={() => <Component />} />
       <Route path={redirectTo} exact render={() => <div>{redirectTo}</div>} />
-    </Router>,
-    { initialState }
+    </Router>
   );
+  !!initialState ? render(toRender, { initialState }) : render(toRender);
 
   expect(history.location.pathname).toEqual(redirectTo);
 }

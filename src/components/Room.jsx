@@ -134,10 +134,14 @@ class Room extends React.Component {
   };
 }
 
-const SearchResults = ({ loading, results, error, ...props }) => {
+const SearchResults = ({ loading, results, error, notFound, ...props }) => {
   return (
     <Box flex={false} pad="medium" overflow="auto" align="center">
-      {error ? (
+      {notFound ? (
+        <Box flex align="center">
+          <Text size="large">This room is no longer active</Text>
+        </Box>
+      ) : error ? (
         <Box flex align="center">
           <Alert color="status-critical" />
           <Text color="status-critical" size="large">
@@ -154,7 +158,6 @@ const SearchResults = ({ loading, results, error, ...props }) => {
 };
 
 const SearchEntry = (props) => {
-  console.log(props.enqueue);
   const { roomId } = props.match.params;
   let loading = false;
   let error = false;
