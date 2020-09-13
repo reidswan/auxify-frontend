@@ -1,6 +1,6 @@
 import React from "react";
 import thunk from "redux-thunk";
-import { MemoryRouter as Router, MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router-dom";
 import { SpotifyCallback } from "../../components/SpotifyAuth";
 import { render, screen, testRedirectsTo } from "../test-utils";
 import configureMockStore from "redux-mock-store";
@@ -16,16 +16,17 @@ test("SpotifyCallback should redirect when no search or no Spotify params", () =
       success: false,
     },
   });
-  store.dispatch = console.log;
+  store.dispatch = () => {};
+
+  testRedirectsTo("/", SpotifyCallback, { store }, "/callback");
 
   testRedirectsTo(
     "/",
-    () => <SpotifyCallback location={{}} />,
+    SpotifyCallback,
     { store },
+    "/callback?q=abc",
     "/callback"
   );
-
-  testRedirectsTo("/", () => <SpotifyCallback />, { store }, "/callback?q=abc");
 });
 
 test("SpotifyCallback displays error on error", () => {
@@ -36,7 +37,7 @@ test("SpotifyCallback displays error on error", () => {
       success: false,
     },
   });
-  store.dispatch = console.log;
+  store.dispatch = () => {};
 
   render(<SpotifyCallback location={{ search: "?error=yes" }} />, { store });
 

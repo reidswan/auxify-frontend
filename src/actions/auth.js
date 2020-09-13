@@ -8,6 +8,7 @@ export const FETCH_USER = asyncActionsCreator("FETCH_USER");
 export const AUTH_WITH_SPOTIFY = asyncActionsCreator("AUTH_WITH_SPOTIFY");
 export const SPOTIFY_CALLBACK = asyncActionsCreator("SPOTIFY_CALLBACK");
 export const LOGIN = asyncActionsCreator("LOGIN");
+export const REGISTER = asyncActionsCreator("REGISTER");
 
 /**
  * Wrapper around thunk action creators that will check for/require the presence of
@@ -100,6 +101,21 @@ export function login(email, password) {
   };
 }
 
+export function register(userData) {
+  return (dispatch, getState) => {
+    dispatch(REGISTER.begin());
+
+    return api
+      .post("/register", userData)
+      .then((result) => {
+        storeToken(result.data.token);
+        dispatch(REGISTER.success(result.data));
+        history.push("/");
+      })
+      .catch((err) => dispatch(REGISTER.failure(err)));
+  };
+}
+
 export const fetchUser = requiresUserLogin(_fetchUser);
 export const getSpotifyAuthURL = requiresUserLogin(_getSpotifyAuthURL);
 export const spotifyCallback = requiresUserLogin(_spotifyCallback);
@@ -135,7 +151,7 @@ export const authHandlers = {
     };
   },
   [FETCH_USER.FAILURE]: (state, action) => {
-    console.log(action.err);
+    console.error(action.err);
     return {
       ...state,
       loadingUser: false,
@@ -219,6 +235,35 @@ export const authHandlers = {
         loading: false,
         error: false,
         success: false,
+      },
+    };
+  },
+  [REGISTER.BEGIN]: (state, action) => {
+    return {
+      ...state,
+      register: {
+        loading: true,
+        error: null,
+      },
+    };
+  },
+  [REGISTER.SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      register: {
+        loading: false,
+        error: null,
+      },
+      token: action.data.token,
+    };
+  },
+  [REGISTER.FAILURE]: (state, action) => {
+    console.error(action.err);
+    return {
+      ...state,
+      register: {
+        loading: false,
+        error: action.err,
       },
     };
   },

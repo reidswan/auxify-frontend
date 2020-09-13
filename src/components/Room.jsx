@@ -6,6 +6,8 @@ import theme from "../styles/theme.js";
 import { fetchRoomById, redirect, search, SEARCH, enqueue } from "../actions";
 import Loader from "./Loader";
 import FlexibleContainer from "./FlexibleContainer";
+import NotFound from "./NotFound";
+import { Redirect } from "react-router-dom";
 
 // amount of time to wait in milliseconds before dispatching the search API call
 const SEARCH_INPUT_DEBOUNCE_MS = 250;
@@ -104,7 +106,11 @@ class Room extends React.Component {
           align="center"
           pad={{ horizontal: "medium", top: "medium" }}
         >
-          {this.props.error ? (
+          {this.props.notFound ? (
+            <NotFound message="It looks like this room doesn't exist." />
+          ) : this.props.forbidden ? (
+            <Redirect to={`/room/${roomId}/join`} />
+          ) : this.props.error ? (
             this.loadFailed()
           ) : loading ? (
             <Loader size="40px" color={theme.global.colors.brand} />
@@ -131,10 +137,14 @@ class Room extends React.Component {
   };
 }
 
-const SearchResults = ({ loading, results, error, ...props }) => {
+const SearchResults = ({ loading, results, error, notFound, ...props }) => {
   return (
     <Box flex={false} pad="medium" overflow="auto" align="center">
-      {error ? (
+      {notFound ? (
+        <Box flex align="center">
+          <Text size="large">This room is no longer active</Text>
+        </Box>
+      ) : error ? (
         <Box flex align="center">
           <Alert color="status-critical" />
           <Text color="status-critical" size="large">
@@ -151,7 +161,6 @@ const SearchResults = ({ loading, results, error, ...props }) => {
 };
 
 const SearchEntry = (props) => {
-  console.log(props.enqueue);
   const { roomId } = props.match.params;
   let loading = false;
   let error = false;
@@ -220,8 +229,11 @@ function mapStateToProps(state) {
     loading: state.currentRoom.loading,
     error: state.currentRoom.error,
     room: state.currentRoom.data,
+    notFound: state.currentRoom.notFound,
+    forbidden: state.currentRoom.forbidden,
     search: state.search,
     enqueue: state.enqueue || {},
+    user: state.user,
   };
 }
 

@@ -10,6 +10,7 @@ test("search handler", () => {
       loading: false,
       error: false,
       results: [],
+      notFound: false,
     },
   };
 
@@ -19,6 +20,7 @@ test("search handler", () => {
     loading: true,
     error: false,
     results: [],
+    notFound: false,
   });
   expect(nextState.shouldNotBeModified).toBe(shouldNotBeModified);
 
@@ -34,6 +36,7 @@ test("search handler", () => {
     loading: false,
     error: false,
     results: searchResults,
+    notFound: false,
   });
 
   nextState = reducer(nextState, actions.SEARCH.failure({ err: "failed" }));
@@ -42,6 +45,19 @@ test("search handler", () => {
     loading: false,
     error: true,
     results: [],
+    notFound: false,
+  });
+
+  nextState = reducer(
+    nextState,
+    actions.SEARCH.failure({ response: { status: 404 } })
+  );
+
+  expect(nextState.search).toStrictEqual({
+    loading: false,
+    error: false,
+    results: [],
+    notFound: true,
   });
 
   nextState = reducer(nextState, actions.SEARCH.clear());
@@ -252,7 +268,13 @@ test("enqueue success handler", () => {
 test("fetch room by ID handler", () => {
   let initialState = {
     shouldNotBeModified,
-    currentRoom: { loading: false, error: false, data: null },
+    currentRoom: {
+      loading: false,
+      error: false,
+      data: null,
+      notFound: false,
+      forbidden: false,
+    },
   };
 
   let nextState = reducer(initialState, actions.FETCH_ROOM_BY_ID.begin());
@@ -262,6 +284,8 @@ test("fetch room by ID handler", () => {
     loading: true,
     error: false,
     data: null,
+    notFound: false,
+    forbidden: false,
   });
 
   nextState = reducer(nextState, actions.FETCH_ROOM_BY_ID.failure(":("));
@@ -269,6 +293,8 @@ test("fetch room by ID handler", () => {
     loading: false,
     error: true,
     data: null,
+    notFound: false,
+    forbidden: false,
   });
 
   let data = { roomId: 12, roomName: ":)" };
@@ -276,6 +302,28 @@ test("fetch room by ID handler", () => {
   expect(nextState.currentRoom).toStrictEqual({
     loading: false,
     error: false,
+    notFound: false,
     data,
+    forbidden: false,
+  });
+
+  let error = { response: { status: 404 } };
+  nextState = reducer(nextState, actions.FETCH_ROOM_BY_ID.failure(error));
+  expect(nextState.currentRoom).toStrictEqual({
+    loading: false,
+    error: false,
+    data: null,
+    notFound: true,
+    forbidden: false,
+  });
+
+  error = { response: { status: 403 } };
+  nextState = reducer(nextState, actions.FETCH_ROOM_BY_ID.failure(error));
+  expect(nextState.currentRoom).toStrictEqual({
+    loading: false,
+    error: false,
+    data: null,
+    notFound: false,
+    forbidden: true,
   });
 });

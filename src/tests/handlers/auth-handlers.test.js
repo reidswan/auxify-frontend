@@ -45,3 +45,41 @@ test("login handler", () => {
     token,
   });
 });
+
+test("register handler", () => {
+  const shouldNotBeModified = "should not be modified";
+  let initialState = {
+    register: { loading: false, error: null },
+    shouldNotBeModified,
+  };
+
+  let nextState = reducer(initialState, actions.REGISTER.begin());
+  expect(nextState).toStrictEqual({
+    register: {
+      loading: true,
+      error: null,
+    },
+    shouldNotBeModified,
+  });
+
+  const error = { response: "oh no" };
+  nextState = reducer(nextState, actions.REGISTER.failure(error));
+  expect(nextState).toStrictEqual({
+    register: {
+      loading: false,
+      error,
+    },
+    shouldNotBeModified,
+  });
+
+  let token = "this is my token";
+  nextState = reducer(nextState, actions.REGISTER.success({ token }));
+  expect(nextState).toStrictEqual({
+    register: {
+      loading: false,
+      error: null,
+    },
+    token,
+    shouldNotBeModified,
+  });
+});

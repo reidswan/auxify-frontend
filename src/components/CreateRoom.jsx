@@ -27,7 +27,6 @@ class CreateRoom extends React.Component {
     let authedWithSpotify =
       !!this.props.user && this.props.user.authed_with_spotify;
     let loading = !!this.props.loadingUser;
-    console.log(this.props);
 
     return (
       <FlexibleContainer a11yTitle="Form for creating a new room">

@@ -48,3 +48,15 @@ export function asyncActionsCreator(prefix) {
     clear,
   };
 }
+
+export function hasStatusCode(error, code) {
+  return !!error && !!error.response && error.response.status === code;
+}
+
+export function isNotFoundError(error) {
+  return hasStatusCode(error, 404);
+}
+
+export function isForbiddenError(error) {
+  return hasStatusCode(error, 403);
+}

@@ -6,6 +6,7 @@ import { isTokenExpired } from "../utils";
 import RoomList from "./RoomList";
 import Room from "./Room";
 import CreateRoom from "./CreateRoom";
+import JoinRoom from "./JoinRoom";
 import Auth from "./Auth";
 import { SpotifyCallback } from "./SpotifyAuth";
 
@@ -42,6 +43,12 @@ const Body = (props) => {
             exact
             path="/callback"
             component={SpotifyCallback}
+            loggedIn={loggedIn}
+          />
+          <PrivateRoute
+            exact
+            path="/room/:roomId/join"
+            component={JoinRoom}
             loggedIn={loggedIn}
           />
         </Switch>

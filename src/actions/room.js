@@ -1,13 +1,21 @@
 import history from "../history";
 import api from "./api";
-import { asyncActionsCreator } from "./common";
+import {
+  asyncActionsCreator,
+  isNotFoundError,
+  isForbiddenError,
+} from "./common";
 import { requiresUserLogin } from "./auth";
 
 export const FETCH_ROOMS = asyncActionsCreator("FETCH_ROOMS");
 export const CREATE_ROOM = asyncActionsCreator("CREATE_ROOM");
 export const FETCH_ROOM_BY_ID = asyncActionsCreator("FETCH_ROOM_BY_ID");
 export const SEARCH = asyncActionsCreator("SEARCH");
-// Can't use asyncActionsCreator since it requires special handling
+export const FETCH_MINIMAL_ROOM_BY_ID = asyncActionsCreator(
+  "FETCH_MINIMAL_ROOM_BY_ID"
+);
+export const JOIN_ROOM = asyncActionsCreator("JOIN_ROOM");
+// Can't use asyncActionsCreator for ENQUEUE
 export const ENQUEUE = {
   BEGIN: "ENQUEUE_BEGIN",
   begin: (roomId, uri) => {
@@ -95,6 +103,35 @@ function _fetchRoomById(roomId) {
 
 export const fetchRoomById = requiresUserLogin(_fetchRoomById);
 
+function _fetchMinimalRoomById(roomId) {
+  return (dispatch, getState) => {
+    dispatch(FETCH_MINIMAL_ROOM_BY_ID.begin());
+
+    let token = getState().token;
+    return api
+      .get(`/rooms/${roomId}/minimal`, token)
+      .then((result) => dispatch(FETCH_MINIMAL_ROOM_BY_ID.success(result.data)))
+      .catch((err) => dispatch(FETCH_MINIMAL_ROOM_BY_ID.failure(err)));
+  };
+}
+
+export const fetchMinimalRoomById = requiresUserLogin(_fetchMinimalRoomById);
+
+function _joinRoom(roomId, roomCode = "") {
+  return (dispatch, getState) => {
+    dispatch(JOIN_ROOM.begin());
+    let token = getState().token;
+    return api
+      .put(`/rooms/${roomId}/join`, { room_code: roomCode }, token)
+      .then((result) => {
+        dispatch(JOIN_ROOM.success(result.data));
+      })
+      .catch((err) => dispatch(JOIN_ROOM.failure(err)));
+  };
+}
+
+export const joinRoom = requiresUserLogin(_joinRoom);
+
 function _search(roomId, query) {
   return (dispatch, getState) => {
     dispatch(SEARCH.begin());
@@ -180,17 +217,23 @@ export const roomHandlers = {
         loading: true,
         error: false,
         data: null,
+        notFound: false,
+        forbidden: false,
       },
     };
   },
   [FETCH_ROOM_BY_ID.FAILURE]: (state, action) => {
     console.error(action.err);
+    let notFound = isNotFoundError(action.err);
+    let forbidden = isForbiddenError(action.err);
     return {
       ...state,
       currentRoom: {
         loading: false,
-        error: true,
+        error: !notFound && !forbidden,
         data: null,
+        notFound,
+        forbidden,
       },
     };
   },
@@ -201,6 +244,8 @@ export const roomHandlers = {
         loading: false,
         error: false,
         data: action.data,
+        notFound: false,
+        forbidden: false,
       },
     };
   },
@@ -211,17 +256,20 @@ export const roomHandlers = {
         loading: true,
         error: false,
         results: [],
+        notFound: false,
       },
     };
   },
   [SEARCH.FAILURE]: (state, action) => {
     console.error(action.err);
+    let notFound = isNotFoundError(action.err);
     return {
       ...state,
       search: {
         loading: false,
-        error: true,
+        error: !notFound,
         results: [],
+        notFound,
       },
     };
   },
@@ -233,6 +281,7 @@ export const roomHandlers = {
         error: false,
         results:
           !!action.data && !!action.data.results ? action.data.results : [],
+        notFound: false,
       },
     };
   },
@@ -243,6 +292,7 @@ export const roomHandlers = {
         loading: false,
         error: false,
         results: [],
+        notFound: false,
       },
     };
   },
@@ -318,6 +368,88 @@ export const roomHandlers = {
         [roomId]: {
           ...roomQueueClone,
         },
+      },
+    };
+  },
+  [FETCH_MINIMAL_ROOM_BY_ID.BEGIN]: (state, action) => {
+    return {
+      ...state,
+      minimalRoom: {
+        loading: true,
+        error: false,
+        notFound: false,
+        data: null,
+      },
+    };
+  },
+  [FETCH_MINIMAL_ROOM_BY_ID.SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      minimalRoom: {
+        loading: false,
+        error: false,
+        notFound: false,
+        data: action.data,
+      },
+    };
+  },
+  [FETCH_MINIMAL_ROOM_BY_ID.FAILURE]: (state, action) => {
+    console.error(action.err);
+    let notFound = isNotFoundError(action.err);
+    return {
+      ...state,
+      minimalRoom: {
+        loading: false,
+        error: !notFound,
+        data: null,
+        notFound,
+      },
+    };
+  },
+  [JOIN_ROOM.BEGIN]: (state, action) => {
+    return {
+      ...state,
+      joinRoom: {
+        loading: true,
+        error: false,
+        success: false,
+        failureMessage: null,
+      },
+    };
+  },
+  [JOIN_ROOM.FAILURE]: (state, action) => {
+    console.error(action.err);
+    return {
+      ...state,
+      joinRoom: {
+        loading: false,
+        error: true,
+        success: false,
+        failureMessage: null,
+      },
+    };
+  },
+  [JOIN_ROOM.CLEAR]: (state, action) => {
+    return {
+      ...state,
+      joinRoom: {
+        loading: false,
+        error: false,
+        success: false,
+        failureMessage: null,
+      },
+    };
+  },
+  [JOIN_ROOM.SUCCESS]: (state, action) => {
+    let success = !!action.data.success;
+    let failureMessage = success ? null : action.data.message;
+    return {
+      ...state,
+      joinRoom: {
+        loading: false,
+        error: false,
+        success,
+        failureMessage,
       },
     };
   },

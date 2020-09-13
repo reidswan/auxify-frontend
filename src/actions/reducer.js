@@ -17,6 +17,10 @@ const initialState = {
     loading: false,
     error: false,
   },
+  register: {
+    loading: false,
+    error: null,
+  },
   processingSpotifyAuth: false,
   callback: {
     loading: false,
@@ -27,13 +31,28 @@ const initialState = {
     loading: false,
     error: false,
     data: null,
+    notFound: false,
+    forbidden: false,
   },
   search: {
     loading: false,
     error: false,
     results: [],
+    notFound: false,
   },
   enqueue: {},
+  minimalRoom: {
+    loading: false,
+    error: false,
+    notFound: false,
+    data: null,
+  },
+  joinRoom: {
+    loading: false,
+    error: false,
+    success: false,
+    failureMessage: null,
+  },
 };
 
 function handlerBasedReducer(initialState, handlers) {
