@@ -218,6 +218,7 @@ export const roomHandlers = {
         error: false,
         data: null,
         notFound: false,
+        forbidden: false,
       },
     };
   },
@@ -244,6 +245,7 @@ export const roomHandlers = {
         error: false,
         data: action.data,
         notFound: false,
+        forbidden: false,
       },
     };
   },
