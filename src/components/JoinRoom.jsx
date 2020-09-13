@@ -15,6 +15,7 @@ import Loader from "./Loader";
 import { fetchMinimalRoomById, JOIN_ROOM, joinRoom } from "../actions";
 import FlexibleContainer from "./FlexibleContainer";
 import theme from "../styles/theme";
+import NotFound from "./NotFound";
 
 class JoinRoom extends React.Component {
   componentDidMount = () => {
@@ -47,13 +48,20 @@ class JoinRoom extends React.Component {
     );
   };
 
+  notFound = () => {
+    return (
+      <Box pad="medium">
+        <NotFound message="We couldn't find the room you're looking for" />
+      </Box>
+    );
+  };
+
   render = () => {
     const { roomId } = this.props.match.params;
     let hasCode = true;
 
     if (!!this.props.data) {
       if (this.props.data.user_in_room) {
-        console.log(this.props.data.user_in_room);
         // already a room member, so go to the room
         return <Redirect to={`/room/${roomId}`} />;
       }
@@ -95,6 +103,8 @@ class JoinRoom extends React.Component {
           >
             <Loader color={theme.global.colors.brand} size="35px" />
           </Box>
+        ) : this.props.notFound ? (
+          this.notFound()
         ) : this.props.error ? (
           this.loadFailed()
         ) : hasCode ? (
@@ -200,7 +210,6 @@ const JoinCodedRoom = (props) => {
 };
 
 function mapStateToProps(state) {
-  console.log(state);
   return {
     ...state.minimalRoom,
     joinRoom: state.joinRoom,
