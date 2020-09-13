@@ -1,6 +1,13 @@
 import axios from "axios";
 
-const HOST = "http://localhost:8080"; // TODO make this configurable
+function getApiHost() {
+  if (!!document.location.hostname.match(/localhost/)) {
+    return "http://localhost:8080";
+  }
+  return "https://api.auxify.reidswan.com";
+}
+
+const HOST = getApiHost(); // TODO make this configurable
 
 export function get(route, token, config = {}) {
   if (!!token) {
