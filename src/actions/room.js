@@ -1,6 +1,10 @@
 import history from "../history";
 import api from "./api";
-import { asyncActionsCreator, isNotFoundError } from "./common";
+import {
+  asyncActionsCreator,
+  isNotFoundError,
+  isForbiddenError,
+} from "./common";
 import { requiresUserLogin } from "./auth";
 
 export const FETCH_ROOMS = asyncActionsCreator("FETCH_ROOMS");
@@ -220,13 +224,15 @@ export const roomHandlers = {
   [FETCH_ROOM_BY_ID.FAILURE]: (state, action) => {
     console.error(action.err);
     let notFound = isNotFoundError(action.err);
+    let forbidden = isForbiddenError(action.err);
     return {
       ...state,
       currentRoom: {
         loading: false,
-        error: !notFound,
+        error: !notFound && !forbidden,
         data: null,
         notFound,
+        forbidden,
       },
     };
   },

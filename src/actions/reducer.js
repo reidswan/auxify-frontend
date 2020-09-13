@@ -32,6 +32,7 @@ const initialState = {
     error: false,
     data: null,
     notFound: false,
+    forbidden: false,
   },
   search: {
     loading: false,

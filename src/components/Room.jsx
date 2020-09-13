@@ -7,6 +7,7 @@ import { fetchRoomById, redirect, search, SEARCH, enqueue } from "../actions";
 import Loader from "./Loader";
 import FlexibleContainer from "./FlexibleContainer";
 import NotFound from "./NotFound";
+import { Redirect } from "react-router-dom";
 
 // amount of time to wait in milliseconds before dispatching the search API call
 const SEARCH_INPUT_DEBOUNCE_MS = 250;
@@ -107,6 +108,8 @@ class Room extends React.Component {
         >
           {this.props.notFound ? (
             <NotFound message="It looks like this room doesn't exist." />
+          ) : this.props.forbidden ? (
+            <Redirect to={`/room/${roomId}/join`} />
           ) : this.props.error ? (
             this.loadFailed()
           ) : loading ? (
@@ -227,8 +230,10 @@ function mapStateToProps(state) {
     error: state.currentRoom.error,
     room: state.currentRoom.data,
     notFound: state.currentRoom.notFound,
+    forbidden: state.currentRoom.forbidden,
     search: state.search,
     enqueue: state.enqueue || {},
+    user: state.user,
   };
 }
 
