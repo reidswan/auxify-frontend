@@ -74,7 +74,11 @@ const NotAuthorized = () => (
 );
 
 const CreateRoomForm = ({ loading, error, dispatch }) => {
-  let icon = loading ? <Loader size="20px" color="black" /> : <Next />;
+  let icon = loading ? (
+    <Loader size="20px" color="black" />
+  ) : (
+    <Next color="black" />
+  );
   return (
     <div>
       <Box

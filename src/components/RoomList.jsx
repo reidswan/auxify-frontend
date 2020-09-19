@@ -38,9 +38,7 @@ class RoomList extends React.Component {
           <Button
             icon={<AddCircle />}
             a11yTitle="Add a new room"
-            onClick={() =>
-              this.props.dispatch(actions.redirect("/create_room"))
-            }
+            onClick={() => this.props.dispatch(actions.redirect("/room/add"))}
           />
         </Box>
         {this.props.loading ? (

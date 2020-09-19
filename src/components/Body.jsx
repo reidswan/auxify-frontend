@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { isTokenExpired } from "../utils";
 import RoomList from "./RoomList";
 import Room from "./Room";
+import AddRoom from "./AddRoom";
 import CreateRoom from "./CreateRoom";
 import JoinRoom from "./JoinRoom";
 import Auth from "./Auth";
@@ -29,13 +30,13 @@ const Body = (props) => {
           />
           <PrivateRoute
             exact
-            path="/room/:roomId"
+            path="/room/:roomId(\d+)"
             component={Room}
             loggedIn={loggedIn}
           />
           <PrivateRoute
             exact
-            path="/create_room"
+            path="/room/create"
             component={CreateRoom}
             loggedIn={loggedIn}
           />
@@ -47,8 +48,14 @@ const Body = (props) => {
           />
           <PrivateRoute
             exact
-            path="/room/:roomId/join"
+            path="/room/:roomId(\d+)/join"
             component={JoinRoom}
+            loggedIn={loggedIn}
+          />
+          <PrivateRoute
+            exact
+            path="/room/add"
+            component={AddRoom}
             loggedIn={loggedIn}
           />
         </Switch>

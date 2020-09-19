@@ -12,5 +12,16 @@ export default {
       size: "14px",
       height: "20px",
     },
+    focus: {
+      shadow: {
+        size: "0px",
+      },
+    },
+  },
+  layer: {
+    background: "focusBackground",
+  },
+  button: {
+    color: "black",
   },
 };
