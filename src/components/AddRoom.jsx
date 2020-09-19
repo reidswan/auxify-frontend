@@ -16,7 +16,7 @@ import FlexibleContainer from "./FlexibleContainer";
 import theme from "../styles/theme";
 import { findRoom, FIND_ROOM } from "../actions";
 
-class CreateRoom extends React.Component {
+class AddRoom extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -217,4 +217,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(CreateRoom);
+export default connect(mapStateToProps)(AddRoom);
