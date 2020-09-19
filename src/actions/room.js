@@ -10,46 +10,12 @@ import { requiresUserLogin } from "./auth";
 export const FETCH_ROOMS = asyncActionsCreator("FETCH_ROOMS");
 export const CREATE_ROOM = asyncActionsCreator("CREATE_ROOM");
 export const FETCH_ROOM_BY_ID = asyncActionsCreator("FETCH_ROOM_BY_ID");
-export const SEARCH = asyncActionsCreator("SEARCH");
 export const FETCH_MINIMAL_ROOM_BY_ID = asyncActionsCreator(
   "FETCH_MINIMAL_ROOM_BY_ID"
 );
 export const JOIN_ROOM = asyncActionsCreator("JOIN_ROOM");
-// Can't use asyncActionsCreator for ENQUEUE
-export const ENQUEUE = {
-  BEGIN: "ENQUEUE_BEGIN",
-  begin: (roomId, uri) => {
-    return {
-      type: "ENQUEUE_BEGIN",
-      roomId,
-      uri,
-    };
-  },
-  SUCCESS: "ENQUEUE_SUCCESS",
-  success: (roomId, uri) => {
-    return {
-      type: "ENQUEUE_SUCCESS",
-      roomId,
-      uri,
-    };
-  },
-  FAILURE: "ENQUEUE_FAILURE",
-  failure: (roomId, uri) => {
-    return {
-      type: "ENQUEUE_FAILURE",
-      roomId,
-      uri,
-    };
-  },
-  CLEAR: "ENQUEUE_CLEAR",
-  clear: (roomId, uri) => {
-    return {
-      type: "ENQUEUE_CLEAR",
-      roomId,
-      uri,
-    };
-  },
-};
+export const DEACTIVATE_ROOM = asyncActionsCreator("DEACTIVATE_ROOM");
+export const FIND_ROOM = asyncActionsCreator("FIND_ROOM");
 
 function _fetchRooms() {
   return (dispatch, getState) => {
@@ -132,37 +98,45 @@ function _joinRoom(roomId, roomCode = "") {
 
 export const joinRoom = requiresUserLogin(_joinRoom);
 
-function _search(roomId, query) {
+function _deactivateRoom(roomId) {
   return (dispatch, getState) => {
-    dispatch(SEARCH.begin());
+    dispatch(DEACTIVATE_ROOM.begin());
     let token = getState().token;
     return api
-      .get(`/rooms/${roomId}/search`, token, {
-        params: { q: query },
-      })
+      .post(`/rooms/${roomId}/deactivate`, {}, token)
       .then((result) => {
-        dispatch(SEARCH.success(result.data));
+        dispatch(DEACTIVATE_ROOM.success(result.data));
+        dispatch(fetchRooms());
+        history.push("/");
       })
-      .catch((err) => dispatch(SEARCH.failure(err)));
+      .catch((err) => dispatch(DEACTIVATE_ROOM.failure(err)));
   };
 }
 
-export const search = requiresUserLogin(_search);
+export const deactivateRoom = requiresUserLogin(_deactivateRoom);
 
-function _enqueue(roomId, uri) {
+function _findRoom(ownerId, roomId) {
   return (dispatch, getState) => {
-    dispatch(ENQUEUE.begin(roomId, uri));
+    dispatch(FIND_ROOM.begin());
     let token = getState().token;
+    let params = {};
+    if (!!ownerId) {
+      params["owner_id"] = ownerId;
+    }
+    if (!!roomId) {
+      params["room_id"] = roomId;
+    }
     return api
-      .put(`/rooms/${roomId}/queue`, { uri }, token)
+      .get(`/rooms/find`, token, { params })
       .then((result) => {
-        dispatch(ENQUEUE.success(roomId, uri));
+        dispatch(FIND_ROOM.success(result.data));
+        history.push(`/room/${result.data.room_id}/join`);
       })
-      .catch((err) => dispatch(ENQUEUE.failure(roomId, uri)));
+      .catch((err) => dispatch(FIND_ROOM.failure(err)));
   };
 }
 
-export const enqueue = requiresUserLogin(_enqueue);
+export const findRoom = requiresUserLogin(_findRoom);
 
 export const roomHandlers = {
   [FETCH_ROOMS.BEGIN]: (state, action) => {
@@ -249,128 +223,6 @@ export const roomHandlers = {
       },
     };
   },
-  [SEARCH.BEGIN]: (state, action) => {
-    return {
-      ...state,
-      search: {
-        loading: true,
-        error: false,
-        results: [],
-        notFound: false,
-      },
-    };
-  },
-  [SEARCH.FAILURE]: (state, action) => {
-    console.error(action.err);
-    let notFound = isNotFoundError(action.err);
-    return {
-      ...state,
-      search: {
-        loading: false,
-        error: !notFound,
-        results: [],
-        notFound,
-      },
-    };
-  },
-  [SEARCH.SUCCESS]: (state, action) => {
-    return {
-      ...state,
-      search: {
-        loading: false,
-        error: false,
-        results:
-          !!action.data && !!action.data.results ? action.data.results : [],
-        notFound: false,
-      },
-    };
-  },
-  [SEARCH.CLEAR]: (state, action) => {
-    return {
-      ...state,
-      search: {
-        loading: false,
-        error: false,
-        results: [],
-        notFound: false,
-      },
-    };
-  },
-  /**
-   * What is [ENQUEUE.*] doing?
-   * Essentially, it tracks state in the following shape:
-   * enqueue: {
-   *  <roomId>: {
-   *    <trackUri>: { loading, error }
-   *  }
-   * }
-   * if enqueue.[roomId].[trackUri] is not present, this is assumed
-   * to mean success to prevent accumulating too much state over time
-   *
-   * So what is happening is that, on begin, we ensure that
-   * state.enqueue.[roomId] and ...[roomId].[uri] exist (with loading=true)
-   * The ...(state.enqueue ? state.enqueue[roomId] : {}) will ensure that
-   * an existing state.enqueue[roomId] is preserved (through cloning), not
-   * overwritten
-   *
-   * on failure, we perform similar checks but with error=true
-   *
-   * on success, we first clone (or create) the enqueue[roomId],
-   * then delete the [uri] property
-   *
-   * tests/room-handlers.test.js might provide more clarity? idk
-   */
-  [ENQUEUE.BEGIN]: (state, action) => {
-    let roomId = action.roomId;
-    let uri = action.uri;
-    return {
-      ...state,
-      enqueue: {
-        ...state.enqueue,
-        [roomId]: {
-          ...(state.enqueue ? state.enqueue[roomId] : {}),
-          [uri]: {
-            loading: true,
-            error: false,
-          },
-        },
-      },
-    };
-  },
-  [ENQUEUE.FAILURE]: (state, action) => {
-    let roomId = action.roomId;
-    let uri = action.uri;
-    return {
-      ...state,
-      enqueue: {
-        ...state.enqueue,
-        [roomId]: {
-          ...(state.enqueue ? state.enqueue[roomId] : {}),
-          [uri]: {
-            loading: false,
-            error: true,
-          },
-        },
-      },
-    };
-  },
-  [ENQUEUE.SUCCESS]: (state, action) => {
-    let roomId = action.roomId;
-    let uri = action.uri;
-    let roomQueueClone = !!state.enqueue[roomId]
-      ? { ...state.enqueue[roomId] }
-      : {};
-    delete roomQueueClone[uri];
-    return {
-      ...state,
-      enqueue: {
-        ...state.enqueue,
-        [roomId]: {
-          ...roomQueueClone,
-        },
-      },
-    };
-  },
   [FETCH_MINIMAL_ROOM_BY_ID.BEGIN]: (state, action) => {
     return {
       ...state,
@@ -450,6 +302,85 @@ export const roomHandlers = {
         error: false,
         success,
         failureMessage,
+      },
+    };
+  },
+  [DEACTIVATE_ROOM.BEGIN]: (state, action) => {
+    return {
+      ...state,
+      deactivateRoom: {
+        loading: true,
+        error: false,
+      },
+    };
+  },
+  [DEACTIVATE_ROOM.SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      deactivateRoom: {
+        loading: false,
+        error: false,
+      },
+    };
+  },
+  [DEACTIVATE_ROOM.CLEAR]: (state, action) => {
+    return {
+      ...state,
+      deactivateRoom: {
+        loading: false,
+        error: false,
+      },
+    };
+  },
+  [DEACTIVATE_ROOM.FAILURE]: (state, action) => {
+    console.error(action.err);
+    return {
+      ...state,
+      deactivateRoom: {
+        loading: false,
+        error: true,
+      },
+    };
+  },
+  [FIND_ROOM.CLEAR]: (state, action) => {
+    return {
+      ...state,
+      findRoom: {
+        loading: false,
+        error: false,
+        notFound: false,
+      },
+    };
+  },
+  [FIND_ROOM.BEGIN]: (state, action) => {
+    return {
+      ...state,
+      findRoom: {
+        loading: true,
+        error: false,
+        notFound: false,
+      },
+    };
+  },
+  [FIND_ROOM.FAILURE]: (state, action) => {
+    console.error(action.err);
+    let notFound = isNotFoundError(action.err);
+    return {
+      ...state,
+      findRoom: {
+        loading: false,
+        error: !notFound,
+        notFound,
+      },
+    };
+  },
+  [FIND_ROOM.SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      findRoom: {
+        loading: false,
+        error: false,
+        notFound: false,
       },
     };
   },

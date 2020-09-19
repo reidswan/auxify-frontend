@@ -1,7 +1,7 @@
 import React from "react";
 import { Box } from "grommet";
 
-const DEFAULT_STYLE = {
+export const DEFAULT_STYLE = {
   minHeight: "150px",
   width: "80vw",
   maxWidth: "700px",

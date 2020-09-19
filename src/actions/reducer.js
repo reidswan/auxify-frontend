@@ -2,6 +2,7 @@ import * as actions from ".";
 import history from "../history";
 import { roomHandlers } from "./room";
 import { authHandlers } from "./auth";
+import { songHandlers } from "./songs";
 
 const initialState = {
   count: 0,
@@ -53,6 +54,16 @@ const initialState = {
     success: false,
     failureMessage: null,
   },
+  deactivateRoom: {
+    loading: false,
+    error: false,
+  },
+  findRoom: {
+    loading: false,
+    error: false,
+    notFound: false,
+    roomId: null,
+  },
 };
 
 function handlerBasedReducer(initialState, handlers) {
@@ -86,6 +97,7 @@ function switchReducer(state = initialState, action) {
 const handlers = {
   ...roomHandlers,
   ...authHandlers,
+  ...songHandlers,
 };
 
 export const reducer = handlerBasedReducer(initialState, handlers);
