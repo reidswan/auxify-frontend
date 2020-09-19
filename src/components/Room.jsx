@@ -30,7 +30,7 @@ import { Redirect } from "react-router-dom";
 // amount of time to wait in milliseconds before dispatching the search API call
 const SEARCH_INPUT_DEBOUNCE_MS = 250;
 // amount of time to wait in milliseconds after success event to clear the result
-const DISPATCH_CLEAR_ENQUEU_WAIT_MS = 1500;
+const DISPATCH_CLEAR_ENQUEUE_WAIT_MS = 1500;
 
 class Room extends React.Component {
   constructor(props) {
@@ -332,7 +332,7 @@ const SearchEntry = (props) => {
           props.dispatch(ENQUEUE.clear(roomId, props.uri));
         } else if (!loading) {
           props.dispatch(
-            enqueue(roomId, props.uri, DISPATCH_CLEAR_ENQUEU_WAIT_MS)
+            enqueue(roomId, props.uri, DISPATCH_CLEAR_ENQUEUE_WAIT_MS)
           );
         }
       }}
